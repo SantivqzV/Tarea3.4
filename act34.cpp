@@ -20,6 +20,100 @@ using namespace std;
 //Clock
 
 /**
+ * @class Linea
+ * 
+ * @brief Representa una línea de datos con información de fecha, hora, IP y mensaje.
+ * 
+ * La clase Linea proporciona una estructura para almacenar 
+ * y manipular datos relacionados con líneas de información. 
+ * Cada objeto Linea contiene información como el año, mes, 
+ * día, hora, minuto, segundo, dirección IP y mensaje. 
+ * Además, la clase proporciona constructores para inicializar 
+ * objetos con estos datos y getters para acceder a ellos.
+*/
+class Linea{
+    private: 
+        int year;           ///< Año de la línea de datos.
+        string month;       ///< Mes de la línea de datos en formato de tres letras (por ejemplo, "Jan" para enero).
+        int day;            ///< Día de la línea de datos.
+        int hour;           ///< Hora de la línea de datos.
+        int minute;         ///< Minuto de la línea de datos.
+        int second;         ///< Segundo de la línea de datos.
+        string ip;          ///< Dirección IP asociada a la línea de datos.
+        string message;     ///< Mensaje contenido en la línea de datos.
+        double key;
+    public:
+        /**
+         * @brief Constructor por defecto de la clase Linea.
+         * 
+         * Inicializa todos los atributos de la clase con valores predeterminados.
+        */
+        Linea(){
+            year = 0;
+            month = "";
+            day = 0;
+            hour = 0;
+            minute = 0;
+            second = 0;
+            ip = "";
+            message = "";
+            key = 0;
+        }
+        
+        /**
+         * @brief Constructor de la clase Linea con parámetros.
+         * 
+         * Este constructor permite inicializar un objeto Linea con valores específicos para cada atributo.
+         * 
+         * @param year Año de la línea de datos.
+         * @param month Mes de la línea de datos en formato de tres letras (por ejemplo, "Jan" para enero).
+         * @param day Día de la línea de datos.
+         * @param hour Hora de la línea de datos.
+         * @param minute Minuto de la línea de datos.
+         * @param second Segundo de la línea de datos.
+         * @param ip Dirección IP asociada a la línea de datos.
+         * @param message Mensaje contenido en la línea de datos.
+        */
+        Linea(int year, string month, int day, int hour, int minute, int second, string ip, string message, double key){
+            this->year = year;
+            this->month = month;
+            this->day = day;
+            this->hour = hour;
+            this->minute = minute;
+            this->second = second;
+            this->ip = ip;
+            this->message = message;
+            //Falta función de conversión
+        }
+
+        // Getters para acceder a los atributos de la clase.
+        int getYear(){
+            return year;
+        }
+        string getMonth() {
+            return month;
+        }
+        int getDay(){
+            return day;
+        }
+        int getHour(){
+            return hour;
+        }
+        int getMinute(){
+            return minute;
+        }
+        int getSecond(){
+            return second;
+        }
+        string getIp(){
+            return ip;
+        }
+        string getMessage(){
+            return message;
+        }
+};
+
+/**
  * @class NodeQueue
  * 
  * @brief Nodo para Queue

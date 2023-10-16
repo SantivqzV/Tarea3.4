@@ -15,103 +15,13 @@
 */
 
 #include <iostream>
+#include <math.h>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 //Clock
 
-/**
- * @class Linea
- * 
- * @brief Representa una línea de datos con información de fecha, hora, IP y mensaje.
- * 
- * La clase Linea proporciona una estructura para almacenar 
- * y manipular datos relacionados con líneas de información. 
- * Cada objeto Linea contiene información como el año, mes, 
- * día, hora, minuto, segundo, dirección IP y mensaje. 
- * Además, la clase proporciona constructores para inicializar 
- * objetos con estos datos y getters para acceder a ellos.
-*/
-class Linea{
-    private: 
-        int year;           ///< Año de la línea de datos.
-        string month;       ///< Mes de la línea de datos en formato de tres letras (por ejemplo, "Jan" para enero).
-        int day;            ///< Día de la línea de datos.
-        int hour;           ///< Hora de la línea de datos.
-        int minute;         ///< Minuto de la línea de datos.
-        int second;         ///< Segundo de la línea de datos.
-        string ip;          ///< Dirección IP asociada a la línea de datos.
-        string message;     ///< Mensaje contenido en la línea de datos.
-        double key;
-    public:
-        /**
-         * @brief Constructor por defecto de la clase Linea.
-         * 
-         * Inicializa todos los atributos de la clase con valores predeterminados.
-        */
-        Linea(){
-            year = 0;
-            month = "";
-            day = 0;
-            hour = 0;
-            minute = 0;
-            second = 0;
-            ip = "";
-            message = "";
-            key = 0;
-        }
-        
-        /**
-         * @brief Constructor de la clase Linea con parámetros.
-         * 
-         * Este constructor permite inicializar un objeto Linea con valores específicos para cada atributo.
-         * 
-         * @param year Año de la línea de datos.
-         * @param month Mes de la línea de datos en formato de tres letras (por ejemplo, "Jan" para enero).
-         * @param day Día de la línea de datos.
-         * @param hour Hora de la línea de datos.
-         * @param minute Minuto de la línea de datos.
-         * @param second Segundo de la línea de datos.
-         * @param ip Dirección IP asociada a la línea de datos.
-         * @param message Mensaje contenido en la línea de datos.
-        */
-        Linea(int year, string month, int day, int hour, int minute, int second, string ip, string message, double key){
-            this->year = year;
-            this->month = month;
-            this->day = day;
-            this->hour = hour;
-            this->minute = minute;
-            this->second = second;
-            this->ip = ip;
-            this->message = message;
-            //Falta función de conversión
-        }
-
-        // Getters para acceder a los atributos de la clase.
-        int getYear(){
-            return year;
-        }
-        string getMonth() {
-            return month;
-        }
-        int getDay(){
-            return day;
-        }
-        int getHour(){
-            return hour;
-        }
-        int getMinute(){
-            return minute;
-        }
-        int getSecond(){
-            return second;
-        }
-        string getIp(){
-            return ip;
-        }
-        string getMessage(){
-            return message;
-        }
-};
 
 /**
  * @class NodeQueue
@@ -287,6 +197,224 @@ class Queue{
 };
 
 /**
+ * @class Linea
+ * 
+ * @brief Representa una línea de datos con información de fecha, hora, IP y mensaje.
+ * 
+ * La clase Linea proporciona una estructura para almacenar 
+ * y manipular datos relacionados con líneas de información. 
+ * Cada objeto Linea contiene información como el año, mes, 
+ * día, hora, minuto, segundo, dirección IP y mensaje. 
+ * Además, la clase proporciona constructores para inicializar 
+ * objetos con estos datos y getters para acceder a ellos.
+*/
+class Linea{
+    private:
+        string fecha;       ///< Fecha de la línea de datos
+        string time;        ///< Hora de la línea de datos 
+        string ip;          ///< Dirección IP asociada a la línea de datos.
+        string message;     ///< Mensaje contenido en la línea de datos.
+        double key;         ///< Dirección IP en base 10
+    public:
+        /**
+         * @brief Constructor por defecto de la clase Linea.
+         * 
+         * Inicializa todos los atributos de la clase con valores predeterminados.
+        */
+        Linea(){
+            fecha = "";
+            time = "";
+            ip = "";
+            message = "";
+            key = 0;
+        }
+        
+        /**
+         * @brief Constructor de la clase Linea con parámetros.
+         * 
+         * Este constructor permite inicializar un objeto Linea con valores específicos para cada atributo.
+         * 
+         * @param year Año de la línea de datos.
+         * @param month Mes de la línea de datos en formato de tres letras (por ejemplo, "Jan" para enero).
+         * @param day Día de la línea de datos.
+         * @param hour Hora de la línea de datos.
+         * @param minute Minuto de la línea de datos.
+         * @param second Segundo de la línea de datos.
+         * @param ip Dirección IP asociada a la línea de datos.
+         * @param message Mensaje contenido en la línea de datos.
+        */
+        Linea(string fecha, string time, string ip, string message){
+            this -> fecha = fecha;
+            this -> time = time;
+            this->ip = ip;
+            this->message = message;
+            this->key = conversion(ip);
+        }
+
+        // Getters para acceder a los atributos de la clase.
+        string getFecha(){
+            return fecha;
+        }
+
+        string getTime(){
+            return time;
+        }
+
+        string getIp(){
+            return ip;
+        }
+
+        string getMessage(){
+            return message;
+        }
+
+        double getKey(){
+            return key;
+        }
+
+        /**
+         * @brief Convertir un Ip a un valor en base 10
+         * 
+         * Este método recibe una ip en string y se encarga de parsear cada elemento de la IP y guardarlo en
+         * una fila (La cual sigue la metodología FIFO). Despues se inspeccionarán los elementos de dicha fila, se
+         * realizará la operación de conversión correspondiente y se borrarán de ella. Todo esto dará un double con
+         * el valor decimal del IP.
+         * 
+         * @param[in] string ip, string a parsear y convertir a base 10
+         * 
+         * @return double total, valor del key de la IP
+         * 
+         * @note Comepljidad de tiempo: O(n)
+         * @note Complejidad de espacio: O(1)
+         * 
+        */
+        double conversion(string ip){
+            double total;
+
+            //Definir la queue para elementos del IP
+            Queue<string>* temp = new Queue<string>();
+            string aux = "";
+
+            //Parsear y guardar elementos del ip en Queue
+            for(int i = 0; i <= ip.size(); i++){
+                if(ip[i] == '.'){
+                    temp->enqueue(aux);
+                    aux = "";
+                }
+                else{
+                    aux += ip[i];
+                }
+            }
+            temp -> enqueue(aux);
+
+            //Convertir los datos de la IP a base 10
+            int sizeTemp  = temp -> getSize();
+            for(int i = 0; i < sizeTemp; i++){
+                total += stoi(temp->peek()) * pow(256, 3-i);
+                temp->dequeue();
+            }
+
+            delete temp;
+            return total;
+        }
+
+        /**
+         * @brief SobreCarga de "=="
+         * 
+         * Esta función verifica si dos objetos de la clase Linea son iguales comparando 
+         * sus atributos de Key (Ip en base 10). Si estas llaves son iguales, la función 
+         * devuelve true, de lo contrario false.
+         * 
+         * @param[in] linea El objeto linea con el que se va a comparar.
+         * 
+         * @return true si los objetos son iguales en key, false en caso contrario.
+         * 
+         * @note Complejidad de tiempo: O(1)
+         * @note Complejiad de espacio: O(1)
+        */
+        bool operator==(Linea linea){
+            return this->key == linea.key;
+        }
+
+        /**
+         * @brief SobreCarga de ">"
+         * 
+         * Esta función verifica si un objeto de la clase Linea es mayor que otro comparando 
+         * sus atributos de Key (Ip en base 10). Si la llave del objeto que llama a la función 
+         * es mayor que la llave del objeto que se pasa como parámetro, la función devuelve true, 
+         * de lo contrario false.
+         * 
+         * @param[in] linea El objeto linea con el que se va a comparar.
+         * 
+         * @return true si el objeto que llama a la función es mayor que el objeto que se pasa como parámetro, false en caso contrario.
+         * 
+         * @note Complejidad de tiempo: O(1)
+         * @note Complejidad de espacio: O(1)
+        */
+        bool operator>(Linea linea){
+            return this->key > linea.key;
+        }
+
+        /**
+         * @brief SobreCarga de "<"
+         * 
+         * Esta función verifica si un objeto de la clase Linea es menor que otro comparando 
+         * sus atributos de Key (Ip en base 10). Si la llave del objeto que llama a la función 
+         * es menor que la llave del objeto que se pasa como parámetro, la función devuelve true, 
+         * de lo contrario false.
+         * 
+         * @param[in] linea El objeto linea con el que se va a comparar.
+         * 
+         * @return true si el objeto que llama a la función es menor que el objeto que se pasa como parámetro, false en caso contrario.
+         * 
+         * @note Complejidad de tiempo: O(1)
+         * @note Complejidad de espacio: O(1)
+        */
+        bool operator<(Linea linea){
+            return this->key < linea.key;
+        }
+
+        /**
+         * @brief SobreCarga de ">="
+         * 
+         * Esta función verifica si un objeto de la clase Linea es mayor o igual que otro comparando 
+         * sus atributos de Key (Ip en base 10). Si la llave del objeto que llama a la función 
+         * es mayor o igual que la llave del objeto que se pasa como parámetro, la función devuelve true, 
+         * de lo contrario false.
+         * 
+         * @param[in] linea El objeto linea con el que se va a comparar.
+         * 
+         * @return true si el objeto que llama a la función es mayor o igual que el objeto que se pasa como parámetro, false en caso contrario.
+         * 
+         * @note Complejidad de tiempo: O(1)
+         * @note Complejidad de espacio: O(1)
+        */
+        bool operator>=(Linea linea){
+            return this->key >= linea.key;
+        }
+
+        /**
+         * @brief SobreCarga de "<="
+         * 
+         * Esta función verifica si un objeto de la clase Linea es menor o igual que otro comparando 
+         * sus atributos de Key (Ip en base 10). Si la llave del objeto que llama a la función 
+         * es menor o igual que la llave del objeto que se pasa como parámetro, la función devuelve true, 
+         * de lo contrario false.
+         * 
+         * @param[in] linea El objeto linea con el que se va a comparar.
+         * 
+         * @return true si el objeto que llama a la función es menor o igual que el objeto que se pasa como parámetro, false en caso contrario.
+         * 
+         * @note Complejidad de tiempo: O(1)
+         * @note Complejidad de espacio: O(1)
+        */ 
+        bool operator<=(Linea linea){
+            return this->key <= linea.key;
+        }
+};
+
+
+/**
  * @class NodeBST
  * 
  * @brief Clase para nodo para un BST. Se utiliza "Template class" que representa el tipo de dato que recibe el nodo. 
@@ -353,7 +481,7 @@ class BST{
                 p->right = insertarRecursivo(p->right, info);
             }
             else{
-                cout << "El dato ya existe" << endl;
+                cout << "El dato " << info.getIp() << " ya existe" << endl;
             }
             return p;
         }
@@ -746,10 +874,47 @@ class BST{
         int whatLevelAmI(T dato){
             return getLevel(root, dato);
         }
+
+        
+        /**
+         * @brief Lee datos de un archivo de registro y los almacena en el BST.
+         * 
+         * Esta función abre el archivo "bitacoraelb.txt" y lee cada línea de registro. Luego, procesa y extrae
+         * los datos relevantes de cada línea, como año, mes, día, hora, minuto, segundo, dirección IP y mensaje.
+         * Utiliza estos datos para crear un objeto Linea y lo inserta al final de la lista doblemente enlazada.
+         * 
+         * @return Nada se devuelve explícitamente ya que la función modifica la lista en su lugar.
+         * 
+         * @note Complejidad de tiempo: O(N) - Donde N es la cantidad de líneas en el archivo de registro.
+         * @note Complejidad de espacio: O(1) - Se asignan recursos para almacenar los datos de cada línea, pero no se utiliza memoria adicional significativa.
+        */
+        void read() {
+            ifstream file;
+            file.open("bitacoraelb.txt");
+            string line;
+            while(getline(file, line)){
+                stringstream ss(line);
+                string year, month, day, time, ip, message;
+                ss >> year;   // Leer el año
+                ss >> month;  // Leer el mes
+                ss >> day;    // Leer el día
+                ss >> time;   // Leer la hora
+                ss.ignore(6); // Ignorar " | IP: "
+                ss >> ip;     // Leer la IP
+                ss.ignore(8); // Ignorar " | INFO: "
+                getline(ss, message, '\n'); // Utilizar '\n' en lugar de ' ' para leer el mensaje
+                string fecha_completa = year + " " + month + " " + day;
+                Linea linea(fecha_completa, time, ip, message);
+                insertar(linea);
+            }
+            file.close();
+        }
 };
 
 //Arbol biselado
 
 int main(){
+    BST<Linea> * arbol = new BST<Linea>();
+    arbol -> read();
     return 0;
 }

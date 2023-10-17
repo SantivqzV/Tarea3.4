@@ -14,187 +14,16 @@
  * Referencias
 */
 
+//Librerias básicas para el programa
 #include <iostream>
 #include <math.h>
 #include <fstream>
 #include <sstream>
+#include <vector>
+
+//libreria para medir tiempos de ejecución
+#include <chrono>
 using namespace std;
-
-//Clock
-
-
-/**
- * @class NodeQueue
- * 
- * @brief Nodo para Queue
- * 
- * Esta clase representa un nodo para una queue. Se utiliza la misma declaración
- * que una lista ligada simple; es decir, donde cada nodo tiene un dato y un apuntador
- * a un nodo sucesor. Se utiliza "Template Class" para representar cualquier tipo de dato que pueda contener el nodo.
- * 
- * @tparam T, tipo de dato que se guardará en el nodo
- * @param T dato, dato a guardar en el nodo
- * @param NodeQueue<T>* next, apuntador al siguiente nodo
-*/
-template <class T>
-class NodeQueue{
-    public:
-        T dato;
-        NodeQueue<T>* next;
-
-        //Constructor por default de un nodo
-        NodeQueue(T dataValue){
-            dato = dataValue;
-            next = nullptr;
-        }
-};
-
-/**
- * @class Queue
- * 
- * @brief clase para representar una queue
- * 
- * Esta clase representa una fila. Cada nodo tiene un dato y un enlace al siguiente nodo de la lista.
- * Se incluyen métodos para crear, leer y borrar nodos, asi como constructor y destructor para la
- * gestión de memoria dinámica. Sigue la estructura FIFO (First-in, first-out)
- * 
- * @tparam T; tipo de dato de entrada
- * @param NodeQueue<T>* head, apuntador al primer elemento de la queue
- * @param NodeQueue<T>* tail, apuntador al último elemento de la queue
- * @param int size, tamaño de la cola
-*/
-template <class T>
-class Queue{
-    private:
-        NodeQueue<T>* head;
-        NodeQueue<T>* tail;
-        int size;
-    public:
-        //Constructor por default de Queue
-        Queue(){
-            head = nullptr;
-            tail = nullptr;
-            size = 0;
-        }
-
-        //Destructor de Queue
-        ~Queue(){
-            NodeQueue<T>* temp = head;
-            while(temp != nullptr){
-                head = head->next;
-                size--;
-                delete temp;
-                temp = head;
-            }
-            head = nullptr;
-            tail = nullptr;
-        }
-
-        //Getter
-        /**
-         * @brief Obtener el tamaño de la cola
-         * 
-         * Este método regresa el tamaño de la cola.
-         * 
-         * @return int, tamaño de la cola
-         * 
-         * @note Complejidad de tiempo: O(1)
-         * @note Complejidad de espacio: O(1)
-        */
-        int getSize(){
-            return size;
-        }
-
-        /**
-         * @brief checar si la cola está vacía
-         * 
-         * Este método booleano checa si la cola está vacía.
-         * Si está vacía regresa true, de lo contrario regresa false.
-         * 
-         * @return true, si la lista está vacía
-         * @return false, si la lista no está vacía
-         * 
-         * @note Complejidad de tiempo: O(1)
-         * @note Complejidad de espacio: O(1)
-        */
-        bool isEmpty(){
-            return head == nullptr;
-        }
-
-        /**
-         * @brief Insertar un elemento al final de la lista
-         * 
-         * Esta función inserta un elemento en la cola en la última posición.
-         * Es decir, los primeros elementos en entrar, serán los primeros elementos de la cola.
-         * Estos mismos elementos serán los primeros en salir. 
-         * 
-         * @param[in] T dato, el valor a agregar a la cola
-         * 
-         * @return void, cola modificada con el valor agregado
-         * 
-         * @note Complejidad de tiempo: O(1)
-         * @note Complejidad de espacio: O(1)
-        */
-        void enqueue(T dato){
-            size++;
-            NodeQueue<T>* newNode = new NodeQueue<T>(dato);
-
-            //Checar si la cola está vacía
-            if(isEmpty()){
-                head = newNode;
-                tail = newNode;
-            }else{
-                tail->next = newNode;
-                tail = newNode;
-            }
-        }
-
-        /**
-         * @brief Eliminar un elemento de la cola
-         * 
-         * Esta función elimina el primer elemento de la cola.
-         * Es decir, el primer elemento en entrar, será el primer elemento en salir.
-         * 
-         * @return void, cola modificada con el primer elemento eliminado
-         * 
-         * @note Complejidad de tiempo: O(1)
-         * @note Complejidad de espacio: O(1)
-        */
-        void dequeue(){
-            size--;
-            //Checar si la cola está vacía
-            if(isEmpty()){
-                cout << "La cola está vacía" << endl;
-            }
-            else{
-                NodeQueue<T>* temp = head;
-                head = head->next;
-                delete temp;
-            }
-        }
-
-        /**
-         * @brief Obtener el primer elemento de la cola
-         * 
-         * Esta función regresa el primer elemento de la cola.
-         * Es decir, el primer elemento en entrar y el primer elemento en salir.
-         * 
-         * @return T, el primer elemento de la cola
-         * 
-         * @note Complejidad de tiempo: O(1)
-         * @note Complejidad de espacio: O(1)
-        */
-        T peek(){
-            //Checar si la cola está vacía
-            if(isEmpty()){
-                cout << "La cola está vacía" << endl;
-                return T();
-            }
-            else{
-                return head->dato;
-            }
-        }
-};
 
 /**
  * @class Linea
@@ -292,29 +121,27 @@ class Linea{
             double total;
 
             //Definir la queue para elementos del IP
-            Queue<string>* temp = new Queue<string>();
+            vector<string> temp;
             string aux = "";
 
             //Parsear y guardar elementos del ip en Queue
             for(int i = 0; i <= ip.size(); i++){
                 if(ip[i] == '.'){
-                    temp->enqueue(aux);
+                    temp.push_back(aux);
                     aux = "";
                 }
                 else{
                     aux += ip[i];
                 }
             }
-            temp -> enqueue(aux);
+            temp.push_back(aux);
 
             //Convertir los datos de la IP a base 10
-            int sizeTemp  = temp -> getSize();
+            int sizeTemp  = temp.size();
             for(int i = 0; i < sizeTemp; i++){
-                total += stoi(temp->peek()) * pow(256, 3-i);
-                temp->dequeue();
+                total += stoi(temp[i]) * pow(256, 3-i);
             }
 
-            delete temp;
             return total;
         }
 
@@ -413,7 +240,6 @@ class Linea{
         }
 };
 
-
 /**
  * @class NodeBST
  * 
@@ -481,7 +307,7 @@ class BST{
                 p->right = insertarRecursivo(p->right, info);
             }
             else{
-                cout << "El dato " << info.getIp() << " ya existe" << endl;
+                //cout << "El dato " << info.getIp() << " ya existe" << endl;
             }
             return p;
         }
@@ -506,13 +332,9 @@ class BST{
                 return false;
             }
             if(p->info == value){
-                if(p == root){
-                    cout << "Este nodo es la raíz del árbol" << endl;
-                }
                 return true;
             }
             if(buscar(p->left, value) || buscar(p->right, value)){
-                cout << p->info << " ";
                 return true;
             }
             return false;
@@ -556,194 +378,7 @@ class BST{
             }
             return p;
         }
-
-        /**
-         * @brief Procedimiento de auxiliar para la operación de eliminar.
-         * 
-         * Procedimiento de búsqueda del nodo más a la derecha del subárbol izquierdo. 
-         * Este procedimiento regresa el nodo hoja por el que se va a remplazar el actual para no romper el orden al borrar un nodo. 
-         * 
-         * @param[in] NodeBST<T>* act, nodo actual
-         * @return Nodo hoja por el que se va a remplazar el actual
-         * 
-         * @note Complejidad de tiempo: O(h)
-         * @note Complejidad de espacio: O(1)
-        */
-        NodeBST<T>* remplazar(NodeBST<T>* act){
-            NodeBST<T>* a;
-            NodeBST<T>* p;
-            p  = act;
-
-            //Subárbol de los menores que la raíz
-            a = act -> left;
-
-            //Encontrar el más a la derecha del izquierdo
-            while(a -> right != nullptr){
-                p = a;
-                a = a -> right;
-            }
-
-            //Copiar en act el valor del nodo apuntado por a
-            act -> info = a -> info;
-            if(p == act){
-                p -> left = a -> left;
-            }
-            else{
-                p -> right = a -> left;
-            }
-            return a;
-        }
-    
-        /**
-         * @brief preOrder
-         * 
-         * Recorrer los datos en estilo de preOrder; es decir, 
-         * primero se visita a la raíz y luego se continúan visitando sus hijos tambien en preOrder.
-         * 
-         * @param NodeBST<T>* p, raíz del árbol
-         * @return Impresión del recorrido del árbol
-         * 
-         * @note Complejidad de tiempo: O(n)
-         * @note Complejidad de espacio: O(h)
-        */
-        void preOrder(NodeBST<T>* p){
-            if(p != nullptr){
-                cout << p->info << " ";
-                preOrder(p->left);
-                preOrder(p->right);
-            }
-        }
-
-        /**
-         * @brief inOrder
-         * 
-         * Recorrer los datos en estilo inOrder; es decir,
-         * la visita de la raíz queda en medio del recorrido de sus hijos 
-         * 
-         * @param NodeBST<T>* p, raíz del árbol
-         * @return Impresión del recorrido del árbol
-         * 
-         * @note Complejidad de tiempo: O(n)
-         * @note Complejidad de espacio: O(h)
-        */
-        void inOrder(NodeBST<T>* p){
-            if(p != nullptr){
-                inOrder(p->left);
-                cout << p->info << " ";
-                inOrder(p->right);
-            }
-        }
-
-        /**
-         * @brief postOrder
-         * 
-         * Recorrer los datos en estilo postOrder; es decir,
-         * la raíz se visita despues de haber recorrido sus hijos tambien en postOrder.
-         * 
-         * @param NodeBST<T>* p, raíz del árbol
-         * @return Impresión del recorrido del árbol
-         * 
-         * @note Complejidad de tiempo: O(n)
-         * @note Complejidad de espacio: O(h)
-        */
-        void postOrder(NodeBST<T>* p){
-            if(p != nullptr){
-                postOrder(p->left);
-                postOrder(p->right);
-                cout << p->info << " ";
-            }
-        }
-
-        /**
-         * @brief LevelByLevel
-         * 
-         * Recorrer los datos en estilo nivel por nivel; es decir, se visita cada nivel del árbol antes de pasar al siguiente.
-         * 
-         * @param NodeBST<T>* p, raíz del árbol
-         * @return Impresión del recorrido del árbol
-         * 
-         * @note Complejidad de tiempo: O(n)
-         * @note Complejidad de espacio: O(n)
-        */
-        void levelByLevel(NodeBST<T>* p){
-            if(p == nullptr){
-                return;
-            }
-
-            //Se utliza una fila para ayudar con el proceso de impresión.
-            Queue<NodeBST<T>*> q;
-            q.enqueue(p);
-            while(!q.isEmpty()){
-                int levelSize = q.getSize(); // Use public method to get size
-                for(int i = 0; i < levelSize; i++){
-                    NodeBST<T>* current = q.peek();
-                    q.dequeue();
-                    cout << current->info << " ";
-                    if(current->left != nullptr){
-                        q.enqueue(current->left);
-                    }
-                    if(current->right != nullptr){
-                        q.enqueue(current->right);
-                    }
-                }
-            }
-
-        }
-
-        /**
-         * @brief getHeight
-         * 
-         * Calcular la altura del árbol; es decir, cuantos niveles tiene el árbol.
-         * 
-         * @param NodeBST<T>* p, raíz del árbol
-         * @return Altura del árbol
-         * 
-         * @note Complejidad de tiempo: O(n)
-         * @note Complejidad de espacio: O(h) 
-        */
-        int getHeight(NodeBST<T>* p){
-            if (p == nullptr){
-                return 0;
-            }
-            int leftHeight = getHeight(p->left);
-            int rightHeight = getHeight(p->right);
-            return max(leftHeight, rightHeight) + 1;
-        }
-    
-        /**
-         * @brief getLevel
-         * 
-         * Encontrar el nivel de un nodo dado; es decir, en que nivel se encuentra el nodo a buscar.
-         * 
-         * @param NodeBST<T>* p, raíz del árbol
-         * @param T value, valor del nodo a buscar
-         * @return Nivel del nodo en el árbol, o -1 si no se encuentra
-         * 
-         * @note Complejidad de tiempo: O(h)
-         * @note Complejidad de espacio: O(h)
-        */
-        int getLevel(NodeBST<T>* p, T value){
-            if(p == nullptr){
-                return -1;
-            }
-            if(p->info == value){
-                return 0;
-            }
-            if(value < p->info){
-                int leftLevel = getLevel(p->left, value);
-                if(leftLevel != -1){
-                    return leftLevel + 1;
-                }
-            }
-            else{
-                int rightLevel = getLevel(p->right, value);
-                if(rightLevel != -1){
-                    return rightLevel + 1;
-                }
-            }
-            return -1;
-        }
-
+        
     public:
         //Constructor por default
         BST(){
@@ -768,8 +403,9 @@ class BST{
          * @note Complejidad de tiempo: O(h)
          * @note Complejidad de espacio: O(h)
         */
-        bool ancestors(T info){
+        bool busqueda(T info){
             bool resultado = buscar(root, info);
+
             if(!resultado){
                 cout << "El elemento buscado no existe" << endl;
             }
@@ -807,114 +443,510 @@ class BST{
         void eliminar(T info){
             root = eliminarRecursivo(root, info);
         }
-
-        /**
-         * @brief Desplegar datos almacenados en el BST
-         * 
-         * Esta función desplegará cada uno de los datos almacenados en el BST
-         * dependiendo del parámetro de entrada: 1. Preorder 2. Inorder 3. Postorder 4. getLevel by getLevel
-         * 
-         * @param[in] int decision, número de 1 a 4 con el tipo de recorrido
-         * @return impresión de los elementos en el orden que se haya escogido
-         * 
-         * @note Complejidad de tiempo: O(h)
-         * @note Complejidad de espacio: O(h)
-        */
-        void visit(int decision){
-            switch(decision){
-                case 1:
-                    cout << endl << "PreOrder" << endl;
-                    preOrder(root);
-                    break;
-                case 2:
-                    cout << endl << "InOrder" << endl; 
-                    inOrder(root);
-                    break;
-                case 3:
-                    cout << endl << "PostOrder" << endl;
-                    postOrder(root);
-                    break;
-                case 4:
-                    cout << endl << "Level By Level" << endl;
-                    levelByLevel(root);
-                    break;
-                default:
-                    cout << "Opción no válida" << endl;
-                    break;
-            }
-        }
-
-        /**
-         * @brief Mandar a llamar el método para obtener altura
-         * 
-         * Este método no recibe ningun parámetro pero se encarga de mandar a llamar 
-         * la función que cálcula la altura del árbol con la raíz del mismo.
-         * 
-         * @return Altura del árbol 
-         * 
-         * @note Complejidad de tiempo: O(n)
-         * @note Complejidad de espacio: O(h)
-        */
-        int height(){
-            return getHeight(root);
-        }
-
-        /**
-         * @brief Mandar a llamar el método para obtener altura 
-         * 
-         * Este método solamente recibe el valor a buscar y luego manda a llamar a la función getLevel para encontrar en que nivel
-         * se encuentra el dato buscado. 
-         * 
-         * @param[in] T dato, dato mandado a llamar
-         * @return En que nivel se encuentra el dato buscado
-         * 
-         * @note Complejidad de tiempo: O(h)
-         * @note Complejidad de espacio: O(h)
-        */
-        int whatLevelAmI(T dato){
-            return getLevel(root, dato);
-        }
-
-        
-        /**
-         * @brief Lee datos de un archivo de registro y los almacena en el BST.
-         * 
-         * Esta función abre el archivo "bitacoraelb.txt" y lee cada línea de registro. Luego, procesa y extrae
-         * los datos relevantes de cada línea, como año, mes, día, hora, minuto, segundo, dirección IP y mensaje.
-         * Utiliza estos datos para crear un objeto Linea y lo inserta al final de la lista doblemente enlazada.
-         * 
-         * @return Nada se devuelve explícitamente ya que la función modifica la lista en su lugar.
-         * 
-         * @note Complejidad de tiempo: O(N) - Donde N es la cantidad de líneas en el archivo de registro.
-         * @note Complejidad de espacio: O(1) - Se asignan recursos para almacenar los datos de cada línea, pero no se utiliza memoria adicional significativa.
-        */
-        void read() {
-            ifstream file;
-            file.open("bitacoraelb.txt");
-            string line;
-            while(getline(file, line)){
-                stringstream ss(line);
-                string year, month, day, time, ip, message;
-                ss >> year;   // Leer el año
-                ss >> month;  // Leer el mes
-                ss >> day;    // Leer el día
-                ss >> time;   // Leer la hora
-                ss.ignore(6); // Ignorar " | IP: "
-                ss >> ip;     // Leer la IP
-                ss.ignore(8); // Ignorar " | INFO: "
-                getline(ss, message, '\n'); // Utilizar '\n' en lugar de ' ' para leer el mensaje
-                string fecha_completa = year + " " + month + " " + day;
-                Linea linea(fecha_completa, time, ip, message);
-                insertar(linea);
-            }
-            file.close();
-        }
 };
 
 //Arbol biselado
+/**
+ * @class Nodo 
+ * 
+ * @brief Clase que representa un Nodo para un splay tree
+ * 
+ * Esta clase representa un nodo para un splay tree. 
+ * El nodo contiene un valor, un contador de accesos y punteros hacia su progenitor, nodo izquierdo y nodo derecho.
+ * 
+ * @tparam T tipo de datos guardado en el nodo
+ * @param T value, valor del nodo
+ * @param int accesos, contador de cuantas veces un nodo fue accedido
+ * @param Node<T>* left, puntero al hijo izquierdo
+ * @param Node<T>* right, puntero al hijo derecho
+ * @param Node<T>* parent, puntero al nodo padre. 
+*/
+template <class T>
+class Node{
+    public:
+        T value;
+        int accesos;
+        Node<T>* left;
+        Node<T>* right;
+        Node<T>* parent;
+
+        //Constructor por default
+        Node(T info){
+            value = info;
+            accesos = 0;
+            left = nullptr;
+            right = nullptr;
+            parent = nullptr;
+        }
+};
+
+/**
+ * @class SplayTree
+ * 
+ * @brief Clase representando un Splay tree
+ * 
+ * Esta clase representa una implementación de un Splay Tree. Esta estructura de datos es un
+ * tipo de BST que reajusta el último valor buscado a la primera posición de la estructura. 
+ * Se incluyen operaciones para insertar, borrar, buscar, imprimir y obtener el tamaño. 
+*/
+template <class T>
+class SplayTree{
+    private:
+        Node<T>* root;
+
+        /**
+         * @brief Función que busca un valor en el árbol
+         * 
+         * Esta función busca un valor en el árbol. Si lo encuentra, lo reajusta a la raíz. 
+         * Si no lo encuentra, reajusta el último nodo visitado a la raíz. 
+         * 
+         * @param Node<T>* node, nodo a partir del cual se busca
+         * @param T value, valor a buscar
+         * @return Node<T>* nodo encontrado
+         * 
+         * @note Complejidad de tiempo: O(n)
+         * @note Complejidad de espacio: O(n)
+        */
+        Node<T>* buscar(Node<T>* node, T value){
+            if(node == nullptr){
+                return nullptr;
+            }
+            else if(node->value == value){
+                return node;
+            }
+            else if(node->value > value){
+                return buscar(node->left, value);
+            }
+            else{
+                return buscar(node->right, value);
+            }
+        }
+
+        /**
+         * @brief Función que reajusta un nodo a la raíz
+         * 
+         * Esta función reajusta un nodo a la raíz. 
+         * 
+         * @param Node<T>* node, nodo a reajustar
+         * 
+         * @note Complejidad de tiempo: O(n)
+         * @note Complejidad de espacio: O(1)
+        */
+        void splay(Node<T>* node){
+            while(node->parent != nullptr){
+                if(node->parent->parent == nullptr){
+                    if(node->parent->left == node){
+                        rotateRight(node->parent);
+                    }
+                    else{
+                        rotateLeft(node->parent);
+                    }
+                }
+                else if(node->parent->left == node && node->parent->parent->left == node->parent){
+                    rotateRight(node->parent->parent);
+                    rotateRight(node->parent);
+                }
+                else if(node->parent->right == node && node->parent->parent->right == node->parent){
+                    rotateLeft(node->parent->parent);
+                    rotateLeft(node->parent);
+                }
+                else if(node->parent->left == node && node->parent->parent->right == node->parent){
+                    rotateRight(node->parent);
+                    rotateLeft(node->parent);
+                }
+                else{
+                    rotateLeft(node->parent);
+                    rotateRight(node->parent);
+                }
+            }
+        }
+
+        /**
+         * @brief Función que rota un nodo a la derecha
+         * 
+         * Esta función rota un nodo a la derecha. 
+         * 
+         * @param Node<T>* node, nodo a rotar
+         * 
+         * @note Complejidad de tiempo: O(1)
+         * @note Complejidad de espacio: O(1)
+        */
+        void rotateRight(Node<T>* node){
+            Node<T>* aux = node->left;
+            node->left = aux->right;
+            if(aux->right != nullptr){
+                aux->right->parent = node;
+            }
+            aux->parent = node->parent;
+            if(node->parent == nullptr){
+                root = aux;
+            }
+            else if(node == node->parent->right){
+                node->parent->right = aux;
+            }
+            else{
+                node->parent->left = aux;
+            }
+            aux->right = node;
+            node->parent = aux;
+        }
+
+        /**
+         * @brief Función que rota un nodo a la izquierda
+         * 
+         * Esta función rota un nodo a la izquierda. 
+         * 
+         * @param Node<T>* node, nodo a rotar
+         * 
+         * @note Complejidad de tiempo: O(1)
+         * @note Complejidad de espacio: O(1)
+        */
+        void rotateLeft(Node<T>* node){
+            Node<T>* aux = node->right;
+            node->right = aux->left;
+            if(aux->left != nullptr){
+                aux->left->parent = node;
+            }
+            aux->parent = node->parent;
+            if(node->parent == nullptr){
+                root = aux;
+            }
+            else if(node == node->parent->left){
+                node->parent->left = aux;
+            }
+            else{
+                node->parent->right = aux;
+            }
+            aux->left = node;
+            node->parent = aux;
+        }
+
+        /**
+         * @brief Función que imprime el árbol
+         * 
+         * Esta función imprime el árbol. 
+         * 
+         * @param Node<T>* node, nodo a partir del cual se imprime
+         * 
+         * @note Complejidad de tiempo: O(n)
+         * @note Complejidad de espacio: O(n)
+        */
+        void print(Node<T>* node, string indent, bool last){
+            if(node != nullptr){
+                cout << indent;
+                if(last){
+                    cout << "R----";
+                    indent += "     ";
+                }
+                else{
+                    cout << "L----";
+                    indent += "|    ";
+                }
+                cout << node->value << endl;
+                print(node->left, indent, false);
+                print(node->right, indent, true);
+            }
+        }
+
+        /**
+         * @brief Función que obtiene el tamaño del árbol
+         * 
+         * Esta función obtiene el tamaño del árbol. 
+         * 
+         * @param Node<T>* node, nodo a partir del cual se obtiene el tamaño
+         * @return int tamaño del árbol
+         * 
+         * @note Complejidad de tiempo: O(n)
+         * @note Complejidad de espacio: O(n)
+        */
+        int size(Node<T>* node){
+            if(node == nullptr){
+                return 0;
+            }
+            else{
+                return 1 + size(node->left) + size(node->right);
+            }
+        }
+
+        /**
+         * @brief Función que obtiene el nodo con el valor mínimo
+         * 
+         * Esta función obtiene el nodo con el valor mínimo. 
+         * 
+         * @param Node<T>* node, nodo a partir del cual se obtiene el valor mínimo
+         * @return Node<T>* nodo con el valor mínimo
+         * 
+         * @note Complejidad de tiempo: O(n)
+         * @note Complejidad de espacio: O(1)
+        */
+        Node<T>* minValueNode(Node<T>* node){
+            Node<T>* current = node;
+            while(current->left != nullptr){
+                current = current->left;
+            }
+            return current;
+        }
+
+        /**
+         * @brief Función que elimina un nodo
+         * 
+         * Esta función elimina un nodo. 
+         * 
+         * @param Node<T>* node, nodo a eliminar
+         * 
+         * @note Complejidad de tiempo: O(n)
+         * @note Complejidad de espacio: O(1)
+        */
+        void del(Node<T>* node){
+            if(node->left == nullptr){
+                Node<T>* aux = node->right;
+                if(node->parent == nullptr){
+                    root = aux;
+                }
+                else if(node == node->parent->left){
+                    node->parent->left = aux;
+                }
+                else{
+                    node->parent->right = aux;
+                }
+                if(aux != nullptr){
+                    aux->parent = node->parent;
+                }
+                delete node;
+            }
+            else if(node->right == nullptr){
+                Node<T>* aux = node->left;
+                if(node->parent == nullptr){
+                    root = aux;
+                }
+                else if(node == node->parent->left){
+                    node->parent->left = aux;
+                }
+                else{
+                    node->parent->right = aux;
+                }
+                if(aux != nullptr){
+                    aux->parent = node->parent;
+                }
+                delete node;
+            }
+            else{
+                Node<T>* aux = minValueNode(node->right);
+                node->value = aux->value;
+                del(aux);
+            }
+        }
+
+        public:
+            //Constructor por default
+            SplayTree(){
+                root = nullptr;
+            }
+
+            /**
+             * @brief Función que busca un valor en el árbol
+             * 
+             * Esta función busca un valor en el árbol. Si lo encuentra, lo reajusta a la raíz. 
+             * Si no lo encuentra, reajusta el último nodo visitado a la raíz. 
+             * 
+             * @param T value, valor a buscar
+             * @return Node<T>* nodo encontrado
+             * 
+             * @note Complejidad de tiempo: O(n)
+             * @note Complejidad de espacio: O(n)
+            */
+            Node<T>* busqueda(T value){
+                Node<T>* node = buscar(root, value);
+                if(node){
+                    node->accesos++;
+                    splay(node);
+                }
+                return node;
+            }
+
+            /**
+             * @brief Función que inserta un valor en el árbol
+             * 
+             * Esta función inserta un valor en el árbol. 
+             * 
+             * @param T value, valor a insertar
+             * 
+             * @note Complejidad de tiempo: O(n)
+             * @note Complejidad de espacio: O(1)
+            */
+            void insertar(T value){
+                Node<T>* node = new Node<T>(value);
+                node -> parent = nullptr;
+                node -> left = nullptr;
+                node -> right = nullptr;
+                Node<T>* y = nullptr;
+                Node<T>* x = root;
+
+                while(x != nullptr){
+                    y = x;
+                    if(node->value < x->value){
+                        x = x->left;
+                    }
+                    else{
+                        x = x->right;
+                    }
+                }
+
+                node->parent = y;
+                if(y == nullptr){
+                    root = node;
+                }
+                else if(node->value < y->value){
+                    y->left = node;
+                }
+                else{
+                    y->right = node;
+                }
+                splay(node);
+            }
+
+            /**
+             * @brief Función que elimina un valor del árbol
+             * 
+             * Esta función elimina un valor del árbol. 
+             * 
+             * @param T value, valor a eliminar
+             * 
+             * @note Complejidad de tiempo: O(n)
+             * @note Comepljidad de espacio: O(1)
+            */
+            void eliminar(T value){
+                Node<T>* node = buscar(value);
+                if(node){
+                    del(node);
+                }
+            }
+
+            /**
+             * @brief Función que imprime el árbol
+             * 
+             * Esta función imprime el árbol. 
+             * 
+             * @note Complejidad de tiempo: O(n)
+             * @note Complejidad de espacio: O(n)
+            */
+            void imprimeArbol(){
+                print(root, "", true);
+            }
+};
+
+/**
+ * @brief Lee datos de un archivo de registro y los almacena en la estructura de datos correspondiente.
+ * 
+ * Esta función abre el archivo "bitacoraelb.txt" y lee cada línea de registro. Luego, procesa y extrae
+ * los datos relevantes de cada línea, como año, mes, día, hora, minuto, segundo, dirección IP y mensaje.
+ * Utiliza estos datos para insertar un objeto Linea y lo inserta al final de la estructura correspondiente.
+ * 
+ * @param[in,out] T* arbol, estructura de datos donde se guardarán los objetos
+ * 
+ * @return Estructura de datos con los objetos del archivo
+ * 
+ * @note Complejidad de tiempo: O(N) - Donde N es la cantidad de líneas en el archivo de registro.
+ * @note Complejidad de espacio: O(1) - Se asignan recursos para almacenar los datos de cada línea, pero no se utiliza memoria adicional significativa.
+*/
+template<typename T>
+void read(T* arbol){
+    ifstream file;
+    file.open("bitacoraelb.txt");
+    string line;
+    while(getline(file, line)){
+        stringstream ss(line);
+        string year, month, day, time, ip, message;
+        ss >> year;   // Leer el año
+        ss >> month;  // Leer el mes
+        ss >> day;    // Leer el día
+        ss >> time;   // Leer la hora
+        ss.ignore(6); // Ignorar " | IP: "
+        ss >> ip;     // Leer la IP
+        ss.ignore(8); // Ignorar " | INFO: "
+        getline(ss, message, '\n'); // Utilizar '\n' en lugar de ' ' para leer el mensaje
+        string fecha_completa = year + " " + month + " " + day;
+        Linea linea(fecha_completa, time, ip, message);
+        arbol -> insertar(linea);
+    }
+    file.close();
+}
+
+/**
+ * 
+*/
+template<typename T>
+void busquedaDeDatos(ifstream& file, T* arbol){
+    string line;
+    while(getline(file, line)){
+        stringstream ss(line);
+        string ip;
+        ss.ignore(26); // Ignorar hasta la ip
+        ss >> ip;     // Leer la IP
+        Linea linea("", "", ip, "");
+        if(!arbol -> busqueda(linea)){
+            cout << "Hay datos inexistentes" << endl;
+        }
+    }
+    file.close();
+}
+
+/**
+ * 
+*/
+void tiempoArbol(string file){
+    //Leer archivo
+    ifstream archivo(file);
+
+    //Crear los ADT correspondientes
+    BST<Linea>* arbol = new BST<Linea>();
+    SplayTree<Linea>* splay = new SplayTree<Linea>();
+    
+    //Guardar los elementos del archivo bitacora
+    read(arbol);
+    read(splay);
+
+    //Buscar los elementos del archivo de busqueda para el BST
+    auto inicioBST = chrono::high_resolution_clock::now();
+    busquedaDeDatos(archivo, arbol);
+    auto finBST = chrono::high_resolution_clock::now();
+    auto duracionBST = chrono::duration_cast<chrono::microseconds>(finBST - inicioBST);
+    cout << "Tiempo de ejecución BST: " << duracionBST.count() << " microsegundos" << endl;
+    
+    //Reabrir archivo para la ejecución usando un Splay Tree
+    archivo.open(file);
+
+    //Buscar los elementos del archivo de busqueda para el Slay Tree
+    auto inicioSplay = chrono::high_resolution_clock::now();
+    busquedaDeDatos(archivo, splay);
+    auto finSplay = chrono::high_resolution_clock::now();
+    auto duracionSplay = chrono::duration_cast<chrono::microseconds>(finSplay - inicioSplay);
+    cout << "Tiempo de ejecución Splay Tree: " << duracionSplay.count() << " microsegundos" << endl;
+    
+    //Liberar espacio de ambas ADT
+    delete arbol;
+    delete splay;
+}
 
 int main(){
-    BST<Linea> * arbol = new BST<Linea>();
-    arbol -> read();
+    //Iniciar Cronometro de programa
+    auto inicioPrograma = chrono::high_resolution_clock::now();    
+
+    string busquedas[] = {"bitacoraelb.txt", "ResultadosOrdenadosAscendente.txt", "ResultadosOrdenadosDescendente.txt", "ResultadosRepetidos.txt"};
+    
+    //Tamaño de arreglo
+    int size = sizeof(busquedas)/sizeof(busquedas[0]);
+
+    for(int i = 0; i < size; i++){
+        cout << "Con archivo: " << busquedas[i] << endl;
+        tiempoArbol(busquedas[i]);
+        cout << endl;
+    }
+
+    //Tomar tiempo de ejecución del programa completo
+    auto finPrograma = chrono::high_resolution_clock::now();
+    auto duracionPrograma = chrono::duration_cast<chrono::microseconds>(finPrograma - inicioPrograma);
+    cout << endl << "Tiempo total de ejecución: " << duracionPrograma.count() << " microsegundos" << endl;
+
     return 0;
 }

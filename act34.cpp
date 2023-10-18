@@ -971,3 +971,32 @@ int main(){
 
     return 0;
 }
+
+/**
+ * El primer archivo tiene 12006 direcciones IP aleatorias, es decir no siguen ningún tipo de orden predefinido. 
+ * Como se puede ver, el splay tree fue más rápido. Esto se puede deber a que, al hacer el reacomodo, las ips que 
+ * siguen en buscarse se encuentran más cerca del nodo raíz. De igual manera, la naturaleza del splay tree hace que, 
+ * si existen IPs repetidas, están se encontrarán en seguida debido a que, al ser accedido, el nodo se traslada al nodo raíz. 
+ * Mientras que el BST siempre buscará por la misma estructura inicial. 
+ * 
+ * 
+ * En el segundo caso donde se buscan 12006 direcciones IP ordenadas de manera ascendente, el Splay Tree fue más rápido. 
+ * Al empezar con el nodo más chico, en todas las operaciones se buscará por su lado derecho; es decir, como el último nodo a 
+ * ser accedido es el que se coloca en el nodo raíz en la siguiente iteración, después de la primera búsqueda no quedará ningún 
+ * nodo a la izquierda de la raíz y mientras se sigan buscando Ips mayores o iguales al nodo raíz, la búsqueda siempre se realizará 
+ * en el hijo derecho dejando en la izquierda del nodo raíz a todos los números que ya fueron buscados. Toda esta información nos sirve 
+ * para analizar que cada vez que se busca un nodo, ese mismo se elimina del proceso de búsqueda (No del árbol), lo que hace que cada 
+ * vez sea más rápido encontrar el siguiente valor en el archivo ordenado de manera ascendente. Mientras que el BST tiene que recorrer 
+ * a todos los nodos del árbol sin tener ese proceso de eliminación. 
+ * 
+ * 
+ * Para el tercer archivo donde hay 12006 direcciones Ip ordenadas de manera descendente, el Splay Tree fue más rápido. Al empezar con el nodo más grande, 
+ * se repite el mismo proceso que con los ordenados de manera ascendente solamente varía que los nodos buscados se acomodarán a la derecha del nodo raíz y 
+ * a la izquierda quedarán todos los nodos a buscar. Mientras que el BST tiene que recorrer a todos los nodos del árbol sin tener ese proceso de eliminación.
+ * 
+ * 
+ * El último caso muestra el poder del splay tree al buscar una misma IP muchas veces. Debido a la caracteristica de reordenamiento del último nodo accedido al nodo raíz, 
+ * solo se necesita que se recorra una vez el árbol y despues todas las busquedas se realizarán en tiempo constante debido a que la raíz del árbol siempre será el que 
+ * esta siendo buscado. Mientras que el bst tendrá que hacer el mismo recorrido 12006 veces en busqueda de la Ip. 
+ * 
+*/

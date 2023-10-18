@@ -285,7 +285,7 @@ class NodeBST{
  * 
  * @brief Clase representando un árbol binario, una estructura de datos que ordena los elementos
  * mientras se agregan haciendo fácil el ordenamiento de la estructura. Esta clase contiene las operaciones
- * que el árbol puede realizar
+ * que el árbol va a realizar en este programa
  * 
  * @tparam T, tipo de dato que se guardará
  * @param NodeBST<T>* p, puntero a la raíz del árbol
@@ -457,7 +457,6 @@ class BST{
         }
 };
 
-//Arbol biselado
 /**
  * @class Nodo 
  * 
@@ -499,7 +498,7 @@ class Node{
  * 
  * Esta clase representa una implementación de un Splay Tree. Esta estructura de datos es un
  * tipo de BST que reajusta el último valor buscado a la primera posición de la estructura. 
- * Se incluyen operaciones para insertar, borrar, buscar, imprimir y obtener el tamaño. 
+ * Se incluyen operaciones para insertar, borrar y buscar. 
 */
 template <class T>
 class SplayTree{
@@ -516,8 +515,8 @@ class SplayTree{
          * @param T value, valor a buscar
          * @return Node<T>* nodo encontrado
          * 
-         * @note Complejidad de tiempo: O(n)
-         * @note Complejidad de espacio: O(n)
+         * @note Complejidad de tiempo: O(h)
+         * @note Complejidad de espacio: O(h)
         */
         Node<T>* buscar(Node<T>* node, T value){
             if(node == nullptr){
@@ -541,7 +540,7 @@ class SplayTree{
          * 
          * @param Node<T>* node, nodo a reajustar
          * 
-         * @note Complejidad de tiempo: O(n)
+         * @note Complejidad de tiempo: O(h)
          * @note Complejidad de espacio: O(1)
         */
         void splay(Node<T>* node){
@@ -631,53 +630,6 @@ class SplayTree{
             }
             aux->left = node;
             node->parent = aux;
-        }
-
-        /**
-         * @brief Función que imprime el árbol
-         * 
-         * Esta función imprime el árbol. 
-         * 
-         * @param Node<T>* node, nodo a partir del cual se imprime
-         * 
-         * @note Complejidad de tiempo: O(n)
-         * @note Complejidad de espacio: O(n)
-        */
-        void print(Node<T>* node, string indent, bool last){
-            if(node != nullptr){
-                cout << indent;
-                if(last){
-                    cout << "R----";
-                    indent += "     ";
-                }
-                else{
-                    cout << "L----";
-                    indent += "|    ";
-                }
-                cout << node->value << endl;
-                print(node->left, indent, false);
-                print(node->right, indent, true);
-            }
-        }
-
-        /**
-         * @brief Función que obtiene el tamaño del árbol
-         * 
-         * Esta función obtiene el tamaño del árbol. 
-         * 
-         * @param Node<T>* node, nodo a partir del cual se obtiene el tamaño
-         * @return int tamaño del árbol
-         * 
-         * @note Complejidad de tiempo: O(n)
-         * @note Complejidad de espacio: O(n)
-        */
-        int size(Node<T>* node){
-            if(node == nullptr){
-                return 0;
-            }
-            else{
-                return 1 + size(node->left) + size(node->right);
-            }
         }
 
         /**
@@ -833,18 +785,6 @@ class SplayTree{
                     del(node);
                 }
             }
-
-            /**
-             * @brief Función que imprime el árbol
-             * 
-             * Esta función imprime el árbol. 
-             * 
-             * @note Complejidad de tiempo: O(n)
-             * @note Complejidad de espacio: O(n)
-            */
-            void imprimeArbol(){
-                print(root, "", true);
-            }
 };
 
 /**
@@ -970,6 +910,7 @@ int main(){
     //Tamaño de arreglo
     int size = sizeof(busquedas)/sizeof(busquedas[0]);
 
+    //Realizar busqueda para cada archivo
     for(int i = 0; i < size; i++){
         cout << "Con archivo: " << busquedas[i] << endl;
         tiempoArbol(busquedas[i]);

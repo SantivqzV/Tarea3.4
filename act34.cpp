@@ -4,14 +4,26 @@
  * Saul Ortega Figueroa - A01252717 
  * v1
  * 
- * Fecha de creación:
- * Fecha de modificación:
+ * Fecha de creación: 13/10/2023
+ * Fecha de modificación: 18/10/2023
  * 
- * Descripción 
+ * Descripción:
+ * Este programa tiene como objetivo leer un archivo de bitácora que contiene registros de accesos por dirección IP. 
+ * Una vez leídos estos registros, el programa almacena las direcciones IP en dos estructuras de datos diferentes: 
+ * un Árbol Binario de Búsqueda (BST) y un Árbol Biselado.
  * 
- * Notas 
+ * Posteriormente, el programa compara el tiempo de ejecución de búsquedas de direcciones IP en ambas estructuras. 
+ * Las búsquedas se realizan utilizando las direcciones IP del mismo archivo de bitácora y se prueban en diferentes 
+ * secuencias: en el orden original, orden ascendente, orden descendente y una misma IP 12006 veces. 
+ * 
+ * Además, se analizará el tiempo de ejecución de las búsquedas en estos casos utilizando la librería chrono. 
+ * 
  * 
  * Referencias
+ * Splay Tree Visualzation. (2023). Usfca.edu. https://www.cs.usfca.edu/~galles/visualization/SplayTree.html 
+ * Introduction to Splay tree data structure. (2023, February 9). GeeksforGeeks; GeeksforGeeks. https://www.geeksforgeeks.org/introduction-to-splay-tree-data-structure/ 
+ * Binary Search Tree. (2015, December 14). GeeksforGeeks; GeeksforGeeks. https://www.geeksforgeeks.org/binary-search-tree-data-structure/ 
+ * What is a distributed denial-of-service (DDoS) attack? (2023). Cloudflare. https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/ 
 */
 
 //Librerias básicas para el programa

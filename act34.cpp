@@ -873,8 +873,19 @@ void read(T* arbol){
 }
 
 /**
- * 
-*/
+ * @brief Realiza la búsqueda de datos en un árbol binario o árbol Splay a partir de un archivo.
+ *
+ * Esta función lee líneas de un archivo y busca los datos correspondientes en un árbol binario
+ * o un árbol Splay. Se espera que el archivo contenga líneas con información, y la función
+ * buscará elementos en el árbol basándose en las IP contenidas en esas líneas.
+ *
+ * @tparam T El tipo de árbol (BST o SplayTree) que se utilizará para la búsqueda.
+ * @param[in] file Un flujo de archivo (ifstream) que se utilizará para leer el archivo de entrada.
+ * @param[in] arbol Un puntero al árbol (BST o SplayTree) en el que se realizarán las búsquedas.
+ *
+ * @note Complejidad de tiempo: O(N * log(N)), donde N es el número de elementos en el árbol.
+ * @note Complejidad de espacio: O(1) - No se asignan nuevas estructuras de datos.
+ */
 template<typename T>
 void busquedaDeDatos(ifstream& file, T* arbol){
     string line;
@@ -892,8 +903,18 @@ void busquedaDeDatos(ifstream& file, T* arbol){
 }
 
 /**
- * 
-*/
+ * @brief Realiza mediciones de tiempo para la búsqueda de datos en árboles BST y Splay Tree.
+ *
+ * Esta función mide el tiempo requerido para buscar datos en dos árboles diferentes: un árbol binario (BST)
+ * y un árbol Splay (Splay Tree). Utiliza un archivo de registro que contiene líneas de información y realiza
+ * búsquedas en los árboles basándose en las IP contenidas en esas líneas. Luego, muestra el tiempo de ejecución
+ * para cada tipo de árbol.
+ *
+ * @param[in] file El nombre del archivo de registro que se utilizará para la búsqueda de datos.
+ *
+ * @note Complejidad de tiempo: O(N * log(N)) para la búsqueda en el árbol (BST o Splay Tree).
+ * @note Complejidad de espacio: O(N) - Se crean estructuras de árbol para almacenar los datos.
+ */
 void tiempoArbol(string file){
     //Leer archivo
     ifstream archivo(file);
